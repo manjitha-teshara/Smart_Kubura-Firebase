@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "604062456535",
+    "firebase_url": "https://smartkubura.firebaseio.com",
+    "project_id": "smartkubura",
+    "storage_bucket": "smartkubura.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604062456535:android:18fad82ac81ea9b2",
+        "android_client_info": {
+          "package_name": "com.trycatch.wasuradananjith.smartkubura2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604062456535-fd973lakj0pud6nb94t2q94j42fv6v8e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trycatch.wasuradananjith.smartkubura2",
+            "certificate_hash": "ccbf16989bde131515201c9d6ee3c0898e2f0fb4"
+          }
+        },
+        {
+          "client_id": "604062456535-oeg5m4rmtu7d8hv86phdpdus62vdpf4h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBviGEpKokquXhIL7zswuEiH8WGE8AQi4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604062456535-oeg5m4rmtu7d8hv86phdpdus62vdpf4h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
