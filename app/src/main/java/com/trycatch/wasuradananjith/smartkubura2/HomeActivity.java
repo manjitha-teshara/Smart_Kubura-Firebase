@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,14 +15,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.trycatch.wasuradananjith.smartkubura2.Model.PaddyField;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    TextView farmerName,farmerEmail,handleWaterLevel;
+    TextView farmerName,farmerEmail,handleWaterLevel,paddyFieldList;
     ImageView imgHandleWaterLevel;
+    Spinner dropdown;
+    DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,13 +49,58 @@ public class HomeActivity extends AppCompatActivity
 
         handleWaterLevel = (TextView)findViewById(R.id.txtWaterLevelControl);
         imgHandleWaterLevel = (ImageView)findViewById(R.id.imgWaterLevelControl);
+        dropdown = findViewById(R.id.spinner);
 
+        SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        String phone = pref.getString("phone", null);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone);
+
+        final List<String> paddies = new ArrayList<String>();
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    PaddyField paddyField= postSnapshot.getValue(PaddyField.class);
+                    paddies.add(paddyField.getPaddyFieldName());
+                    //Log.w("snapshot",postSnapshot.toString());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(HomeActivity.this,
+                        android.R.layout.simple_spinner_item, paddies);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                dropdown.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("MYTAG", "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+
+
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AddPaddyFieldActivity.class);
                 startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
