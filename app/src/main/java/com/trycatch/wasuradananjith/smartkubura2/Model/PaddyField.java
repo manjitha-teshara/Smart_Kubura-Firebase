@@ -5,15 +5,17 @@ public class PaddyField {
     private String paddyFieldName;
     private String imeiNumber;
     private String phone;
+    private Integer isFilling;
 
     public PaddyField() {
     }
 
-    public PaddyField(String waterLevel, String paddyFieldName, String imeiNumber, String phone) {
+    public PaddyField(String waterLevel, String paddyFieldName, String imeiNumber, String phone,Integer isFilling) {
         this.waterLevel = waterLevel;
         this.paddyFieldName = paddyFieldName;
         this.imeiNumber = imeiNumber;
         this.phone = phone;
+        this.isFilling = isFilling;
     }
 
     public String getWaterLevel() {
@@ -46,5 +48,13 @@ public class PaddyField {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Integer getIsFilling() {
+        return isFilling;
+    }
+
+    public void setIsFilling(Integer isFilling) {
+        this.isFilling = isFilling;
     }
 }

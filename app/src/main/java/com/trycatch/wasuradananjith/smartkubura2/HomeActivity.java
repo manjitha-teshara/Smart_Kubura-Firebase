@@ -38,7 +38,8 @@ public class HomeActivity extends AppCompatActivity
     TextView farmerName,farmerEmail,handleWaterLevel,paddyFieldList;
     ImageView imgHandleWaterLevel;
     Spinner dropdown;
-    DatabaseReference mDatabase;
+    DatabaseReference mDatabase,mDatabase1;
+    String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +55,17 @@ public class HomeActivity extends AppCompatActivity
         SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
-        String phone = pref.getString("phone", null);
+        phone = pref.getString("phone", null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone);
 
         final List<String> paddies = new ArrayList<String>();
+
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                paddies.clear();
+                paddies.add("කුඹුරක් තෝරාගෙන නැත");
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     PaddyField paddyField= postSnapshot.getValue(PaddyField.class);
                     paddies.add(paddyField.getPaddyFieldName());
@@ -87,12 +91,56 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
-                Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+                Toast.makeText(parent.getContext(), item, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        imgHandleWaterLevel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (dropdown.getSelectedItem()=="කුඹුරක් තෝරාගෙන නැත"){
+                    Toast.makeText(getApplicationContext(), "කරුණාකර කුඹුරක් තෝරන්න!", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    mDatabase1 = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone+"/"+dropdown.getSelectedItem());
+
+                    mDatabase1.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            PaddyField paddyField= dataSnapshot.getValue(PaddyField.class);
+                            //Toast.makeText(getApplicationContext(), paddyField.getIsFilling().toString(), Toast.LENGTH_LONG).show();
+                            switch (paddyField.getIsFilling()){
+                                case 0:{
+                                    Intent in = new Intent(getApplicationContext(), StartWaterPassActivity.class);
+                                    in.putExtra("paddy_field_name", paddyField.getPaddyFieldName());
+                                    in.putExtra("water_level", paddyField.getWaterLevel());
+                                    startActivity(in);
+                                    finish();
+                                    break;
+                                }
+                                case 1:
+                                    Intent in = new Intent(getApplicationContext(), StopWaterPassActivity.class);
+                                    in.putExtra("paddy_field_name", paddyField.getPaddyFieldName());
+                                    in.putExtra("water_level", paddyField.getWaterLevel());
+                                    startActivity(in);
+                                    finish();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
         });
 
