@@ -167,10 +167,13 @@ public class HomeActivity extends AppCompatActivity
 //        SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
 //        SharedPreferences.Editor editor = pref.edit();
 //
-//        farmerName = (TextView)findViewById(R.id.titleFarmerName);
-//        farmerEmail = (TextView)findViewById(R.id.titleFarmerEmail);
+        farmerName = (TextView)findViewById(R.id.titleFarmerName);
+        farmerEmail = (TextView)findViewById(R.id.titleFarmerEmail);
+        Log.v("farmerName", String.valueOf(farmerName));
 //        farmerName.setText(pref.getString("user", null));
 //        farmerEmail.setText(pref.getString("email", null));
+//        farmerEmail.setText("wasura@gmail.com");
+//       farmerName.setText("Wasura");
     }
 
     @Override
