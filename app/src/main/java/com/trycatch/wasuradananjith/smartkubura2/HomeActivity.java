@@ -39,7 +39,7 @@ public class HomeActivity extends AppCompatActivity
     ImageView imgHandleWaterLevel;
     Spinner dropdown;
     DatabaseReference mDatabase,mDatabase1;
-    String phone;
+    String phone,field_name_stored;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +52,12 @@ public class HomeActivity extends AppCompatActivity
         imgHandleWaterLevel = (ImageView)findViewById(R.id.imgWaterLevelControl);
         dropdown = findViewById(R.id.spinner);
 
-        SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
+        final SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
         phone = pref.getString("phone", null);
+
+        field_name_stored = pref.getString("field_name", null);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone);
 
@@ -74,6 +76,7 @@ public class HomeActivity extends AppCompatActivity
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(HomeActivity.this,
                         android.R.layout.simple_spinner_item, paddies);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                //dropdown.setSelection(adapter.getPosition(pref.getString("field_name", null)));
                 dropdown.setAdapter(adapter);
             }
 
@@ -91,6 +94,9 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = parent.getItemAtPosition(position).toString();
+
+                final SharedPreferences.Editor editor = pref.edit();
+                editor.putString("field_name", item);
                 Toast.makeText(parent.getContext(), item, Toast.LENGTH_LONG).show();
             }
 
@@ -119,6 +125,7 @@ public class HomeActivity extends AppCompatActivity
                                     Intent in = new Intent(getApplicationContext(), StartWaterPassActivity.class);
                                     in.putExtra("paddy_field_name", paddyField.getPaddyFieldName());
                                     in.putExtra("water_level", paddyField.getWaterLevel());
+                                    in.putExtra("required_water_level", paddyField.getRequiredWaterLevel());
                                     startActivity(in);
                                     finish();
                                     break;
@@ -127,6 +134,7 @@ public class HomeActivity extends AppCompatActivity
                                     Intent in = new Intent(getApplicationContext(), StopWaterPassActivity.class);
                                     in.putExtra("paddy_field_name", paddyField.getPaddyFieldName());
                                     in.putExtra("water_level", paddyField.getWaterLevel());
+                                    in.putExtra("required_water_level", paddyField.getRequiredWaterLevel());
                                     startActivity(in);
                                     finish();
                                     break;

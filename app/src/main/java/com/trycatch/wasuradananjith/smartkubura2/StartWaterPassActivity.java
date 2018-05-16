@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ public class StartWaterPassActivity extends AppCompatActivity {
     ImageView btnBackButton,startButton;
     DatabaseReference mDatabase;
     String phone;
+    EditText txtRequiredWaterLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class StartWaterPassActivity extends AppCompatActivity {
         txtWaterLevel =(TextView)findViewById(R.id.lblcurrentWaterLevel);
         btnBackButton = (ImageView)findViewById(R.id.imgBackButton);
         startButton = (ImageView) findViewById(R.id.imgFillWater);
+        txtRequiredWaterLevel = (EditText)findViewById(R.id.txtNeededWaterLevel);
 
 
         SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
@@ -43,7 +46,9 @@ public class StartWaterPassActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         final String water_level = bundle.getString("water_level");
         final String field_name = bundle.getString("paddy_field_name");
+        final String required_water_level = bundle.getString("required_water_level");
         txtWaterLevel.setText(water_level);
+        txtRequiredWaterLevel.setText(required_water_level);
 
         btnBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +82,7 @@ public class StartWaterPassActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         mDatabase.child("isFilling").setValue(1);
+                        mDatabase.child("requiredWaterLevel").setValue(txtRequiredWaterLevel.getText().toString());
 
                         final ProgressDialog progressDialog = new ProgressDialog(StartWaterPassActivity.this,
                                 R.style.AppTheme_Dark_Dialog);
@@ -91,6 +97,7 @@ public class StartWaterPassActivity extends AppCompatActivity {
                                         Intent intent = new Intent(getApplicationContext(),StopWaterPassActivity.class);
                                         intent.putExtra("paddy_field_name", field_name);
                                         intent.putExtra("water_level", water_level);
+                                        intent.putExtra("required_water_level", txtRequiredWaterLevel.getText().toString());
                                         startActivity(intent);
                                         finish();
                                         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);

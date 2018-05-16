@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ public class StopWaterPassActivity extends AppCompatActivity {
     ImageView btnBackButton,stopButton;
     DatabaseReference mDatabase;
     String phone;
+    EditText txtRequiredWaterLevel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +34,15 @@ public class StopWaterPassActivity extends AppCompatActivity {
         txtWaterLevel =(TextView)findViewById(R.id.lblcurrentWaterLevel);
         btnBackButton = (ImageView)findViewById(R.id.imgBackButton);
         stopButton = (ImageView)findViewById(R.id.imgStopFillWater);
+        txtRequiredWaterLevel = (EditText)findViewById(R.id.txtNeededWaterLevel);
 
         final Bundle bundle = getIntent().getExtras();
         final String water_level = bundle.getString("water_level");
         final String field_name = bundle.getString("paddy_field_name");
+        final String required_water_level = bundle.getString("required_water_level");
         txtWaterLevel.setText(water_level);
+        txtRequiredWaterLevel.setText(required_water_level);
+        txtRequiredWaterLevel.setEnabled(false);
 
         btnBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +95,7 @@ public class StopWaterPassActivity extends AppCompatActivity {
                                         Intent intent = new Intent(getApplicationContext(),StartWaterPassActivity.class);
                                         intent.putExtra("paddy_field_name", field_name);
                                         intent.putExtra("water_level", water_level);
+                                        intent.putExtra("required_water_level", required_water_level);
                                         startActivity(intent);
                                         finish();
                                         overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);

@@ -69,7 +69,7 @@ public class AddPaddyFieldActivity extends AppCompatActivity {
                 }
                 else{
 
-                    final PaddyField paddy = new PaddyField(level,paddyFieldName,imei,phone,0);
+                    final PaddyField paddy = new PaddyField("0",paddyFieldName,imei,phone,0,level);
 
                     mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
