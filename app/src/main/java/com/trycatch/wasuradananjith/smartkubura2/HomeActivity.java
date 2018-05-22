@@ -45,6 +45,13 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        Intent i = new Intent(this, NotificationService.class);
+        // Add extras to the bundle
+        i.putExtra("foo", "bar");
+        // Start the service
+        startService(i);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -80,10 +87,10 @@ public class HomeActivity extends AppCompatActivity
                 }
                 // creating the Spinner/Dropdown to select a particular paddy field name, in order to proceed with all the tasks in future
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(HomeActivity.this,
-                        android.R.layout.simple_spinner_item, paddies);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                //dropdown.setSelection(adapter.getPosition(pref.getString("field_name", null)));
+                        R.layout.spinner_item, paddies);
+                adapter.setDropDownViewResource(R.layout.spinner_item);
                 dropdown.setAdapter(adapter);
+                dropdown.setSelection(adapter.getPosition(pref.getString("field_name", null)));
             }
 
             @Override
@@ -103,7 +110,13 @@ public class HomeActivity extends AppCompatActivity
 
                 final SharedPreferences.Editor editor = pref.edit();
                 editor.putString("field_name", item);
-                Toast.makeText(parent.getContext(), item, Toast.LENGTH_LONG).show();
+                editor.commit();
+                if (item.equals("කුඹුරක් තෝරාගෙන නැත")){
+                    Toast.makeText(parent.getContext(), "කුඹුරක් තෝරාගෙන නැත", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(parent.getContext(), item+ "තෝරාගෙන ඇත", Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
