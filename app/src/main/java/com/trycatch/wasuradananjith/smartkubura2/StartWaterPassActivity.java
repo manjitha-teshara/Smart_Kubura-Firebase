@@ -37,7 +37,7 @@ public class StartWaterPassActivity extends AppCompatActivity {
         startButton = (ImageView) findViewById(R.id.imgFillWater);
         txtRequiredWaterLevel = (EditText)findViewById(R.id.txtNeededWaterLevel);
 
-
+        // get data for the particular logged in user from Shared Preferences (local storage of the app)
         SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -50,6 +50,7 @@ public class StartWaterPassActivity extends AppCompatActivity {
         txtWaterLevel.setText(water_level);
         txtRequiredWaterLevel.setText(required_water_level);
 
+        // load the Home Activity on back arrow button pressed
         btnBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +61,7 @@ public class StartWaterPassActivity extends AppCompatActivity {
             }
         });
 
+        // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser+selectedPaddyFieldName" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone+"/"+field_name);
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -75,14 +77,15 @@ public class StartWaterPassActivity extends AppCompatActivity {
             }
         });
 
+        // when the start water fill button is clicked
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        mDatabase.child("isFilling").setValue(1);
-                        mDatabase.child("requiredWaterLevel").setValue(txtRequiredWaterLevel.getText().toString());
+                        mDatabase.child("isFilling").setValue(1); // update the isFilling state of the database entry to 1
+                        mDatabase.child("requiredWaterLevel").setValue(txtRequiredWaterLevel.getText().toString()); // update the required water level  of the database
 
                         final ProgressDialog progressDialog = new ProgressDialog(StartWaterPassActivity.this,
                                 R.style.AppTheme_Dark_Dialog);

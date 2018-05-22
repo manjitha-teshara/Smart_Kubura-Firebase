@@ -36,6 +36,7 @@ public class StopWaterPassActivity extends AppCompatActivity {
         stopButton = (ImageView)findViewById(R.id.imgStopFillWater);
         txtRequiredWaterLevel = (EditText)findViewById(R.id.txtNeededWaterLevel);
 
+        // get the data passed from the previous activity
         final Bundle bundle = getIntent().getExtras();
         final String water_level = bundle.getString("water_level");
         final String field_name = bundle.getString("paddy_field_name");
@@ -44,6 +45,7 @@ public class StopWaterPassActivity extends AppCompatActivity {
         txtRequiredWaterLevel.setText(required_water_level);
         txtRequiredWaterLevel.setEnabled(false);
 
+        // load the Home Activity on back arrow button pressed
         btnBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,11 +56,13 @@ public class StopWaterPassActivity extends AppCompatActivity {
             }
         });
 
+        // get data for the particular logged in user from Shared Preferences (local storage of the app)
         SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
         phone = pref.getString("phone", null);
 
+        // get the database reference "paddy_fields" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone+"/"+field_name);
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -74,13 +78,14 @@ public class StopWaterPassActivity extends AppCompatActivity {
             }
         });
 
+        // when the stop water fill button is clicked
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        mDatabase.child("isFilling").setValue(0);
+                        mDatabase.child("isFilling").setValue(0); // update the isFilling state of the database entry to 0
 
                         final ProgressDialog progressDialog = new ProgressDialog(StopWaterPassActivity.this,
                                 R.style.AppTheme_Dark_Dialog);

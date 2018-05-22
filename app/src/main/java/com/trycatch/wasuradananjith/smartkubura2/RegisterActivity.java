@@ -39,8 +39,10 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister = (Button)findViewById(R.id.btn_sign_up);
         backToLogin = (TextView)findViewById(R.id.link_login);
 
+        // get the database reference "users" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
+        // when the back to login button is clicked
         backToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        // when the submit/register button is clicked
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,6 +62,8 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
                 String confirmPassword = etConfirmPassword.getText().toString();
+
+                // if the any of the required text fields are empty
                 if (name.isEmpty() &&
                         phone.isEmpty() &&
                         password.isEmpty() &&
@@ -67,8 +72,10 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
                 else{
+                    // checks whether password matches with the re-entered password
                     if(password.equals(confirmPassword)){
 
+                        // create a new instance of User class inorder to add to the database
                         final User user = new User(name,phone,email,password);
 
                         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {

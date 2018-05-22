@@ -39,8 +39,10 @@ public class AddPaddyFieldActivity extends AppCompatActivity {
         imeiNumber = (EditText)findViewById(R.id.edtImeiNumber);
         btnBackButton = (ImageView)findViewById(R.id.imgBackButton);
 
+
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields");
 
+        // load the Home Activity on back arrow button pressed
         btnBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,9 +53,12 @@ public class AddPaddyFieldActivity extends AppCompatActivity {
             }
         });
 
+        // add the new paddy field to the database when the submit/add button is clicked
         imgAddNewFarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // get data for the particular logged in user from Shared Preferences (local storage of the app)
                 SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
 
@@ -63,17 +68,21 @@ public class AddPaddyFieldActivity extends AppCompatActivity {
                 String paddyFieldName = farmName.getText().toString();
                 String imei = imeiNumber.getText().toString();
 
+                // if the any of the required text fields are empty
                 if (level.isEmpty() && paddyFieldName.isEmpty() && imei.isEmpty()){
                     Toast.makeText(getApplicationContext(), "සියලු ක්ෂේත්ර පුරවන්න",
                             Toast.LENGTH_LONG).show();
                 }
                 else{
 
+                    // create a new instance of PaddyField class inorder to add to the database (isFilling is initially 0 here)
                     final PaddyField paddy = new PaddyField("0",paddyFieldName,imei,phone,0,level);
+
 
                     mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            // if the name of the paddy field is registered under the same farmer, display an error
                             if(dataSnapshot.child(paddy.getPhone()).child(paddy.getPaddyFieldName()).exists()){
                                 Toast.makeText(AddPaddyFieldActivity.this,"මෙම නම මීට පෙර ලියාපදිංචි කර ඇත!",Toast.LENGTH_SHORT).show();
                             }

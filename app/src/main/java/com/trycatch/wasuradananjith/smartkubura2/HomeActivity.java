@@ -52,6 +52,7 @@ public class HomeActivity extends AppCompatActivity
         imgHandleWaterLevel = (ImageView)findViewById(R.id.imgWaterLevelControl);
         dropdown = findViewById(R.id.spinner);
 
+        // get data for the particular logged in user from Shared Preferences (local storage of the app)
         final SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
@@ -59,8 +60,10 @@ public class HomeActivity extends AppCompatActivity
 
         field_name_stored = pref.getString("field_name", null);
 
+        // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone);
 
+        // creating an ArrayList to store the paddy_filed names of a particular user (logged in user)
         final List<String> paddies = new ArrayList<String>();
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -68,11 +71,14 @@ public class HomeActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 paddies.clear();
                 paddies.add("කුඹුරක් තෝරාගෙන නැත");
+
+                // add all the paddy_filed names of the particular user to the created ArrayList "paddies"
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     PaddyField paddyField= postSnapshot.getValue(PaddyField.class);
                     paddies.add(paddyField.getPaddyFieldName());
                     //Log.w("snapshot",postSnapshot.toString());
                 }
+                // creating the Spinner/Dropdown to select a particular paddy field name, in order to proceed with all the tasks in future
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(HomeActivity.this,
                         android.R.layout.simple_spinner_item, paddies);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -89,7 +95,7 @@ public class HomeActivity extends AppCompatActivity
         });
 
 
-
+        // when a particular paddy field name is selected from the Spinner/Dropdown
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -106,6 +112,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        // when the ImageView to handle the water level is clicked
         imgHandleWaterLevel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +120,8 @@ public class HomeActivity extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "කරුණාකර කුඹුරක් තෝරන්න!", Toast.LENGTH_LONG).show();
                 }
                 else{
+
+                    // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser+selectedPaddyFieldName" in firebase realtime database
                     mDatabase1 = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone+"/"+dropdown.getSelectedItem());
 
                     mDatabase1.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -121,6 +130,7 @@ public class HomeActivity extends AppCompatActivity
                             PaddyField paddyField= dataSnapshot.getValue(PaddyField.class);
                             //Toast.makeText(getApplicationContext(), paddyField.getIsFilling().toString(), Toast.LENGTH_LONG).show();
                             switch (paddyField.getIsFilling()){
+                                // if the isFilling attribute is 0 in the selected paddy field (NOT FILLING) load the StartWaterPassActivity
                                 case 0:{
                                     Intent in = new Intent(getApplicationContext(), StartWaterPassActivity.class);
                                     in.putExtra("paddy_field_name", paddyField.getPaddyFieldName());
@@ -130,6 +140,7 @@ public class HomeActivity extends AppCompatActivity
                                     finish();
                                     break;
                                 }
+                                // if the isFilling attribute is 1 in the selected paddy field (IS FILLING) load the StopWaterPassActivity
                                 case 1:
                                     Intent in = new Intent(getApplicationContext(), StopWaterPassActivity.class);
                                     in.putExtra("paddy_field_name", paddyField.getPaddyFieldName());
@@ -153,6 +164,8 @@ public class HomeActivity extends AppCompatActivity
         });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        // when the floating button to add a new paddy field is clicked, load the AddPaddyFieldActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,6 +176,7 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        // default code for Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -212,6 +226,7 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
+        // when the logout button is clicked
         if (id == R.id.btnLogout) {
             SharedPreferences pref = getSharedPreferences("loginData", MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();

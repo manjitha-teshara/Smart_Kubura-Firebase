@@ -35,8 +35,10 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = (Button)findViewById(R.id.btn_sign_in);
         proceedToSignUp = (TextView)findViewById(R.id.link_sign_up);
 
+        // get the database reference "users" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
+        // when the login button is clicked
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // when the register new user button is clicked
         proceedToSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // when the log in button is clicked, this method will be called
     private void signIn(final String phone, final String pwd) {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
