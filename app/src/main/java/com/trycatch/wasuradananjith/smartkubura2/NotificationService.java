@@ -26,31 +26,23 @@ public class NotificationService extends Service {
 
     DatabaseReference mDatabase;
     String phone,field_name;
-    /**
-     * A constructor is required, and must call the super IntentService(String)
-     * constructor with a name for the worker thread.
-     */
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-    /**
-     * The IntentService calls this method from the default worker thread with
-     * the intent that started the service. When this method returns, IntentService
-     * stops the service, as appropriate.
-     */
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        // Normally we would do some work here, like download a file.
-        // For our sample, we just sleep for 5 seconds.
+        
         SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
         phone = pref.getString("phone", null);
         field_name = pref.getString("field_name",null);
 
+        // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser+fieldName" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone+"/"+field_name);
         Log.d("phone",phone);
         Log.d("field_name",field_name);
@@ -58,15 +50,19 @@ public class NotificationService extends Service {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                // if the water level is changed in the database
                 if (!field_name.equals("කුඹුරක් තෝරාගෙන නැත")){
                     PaddyField paddyField= dataSnapshot.getValue(PaddyField.class);
                     String required_water_level = paddyField.getRequiredWaterLevel();
                     String water_level = paddyField.getWaterLevel();
 
+                    // if the required water level is met, stop water passing and issue a notification
                     if (Integer.parseInt(water_level)>=Integer.parseInt(required_water_level)){
 
+                        // update the isFilling field to 0 (which indicates stop water passing)
                         mDatabase.child("isFilling").setValue(0); // update the isFilling state of the database entry to 0
 
+                        // build the notification and issue it
                         NotificationCompat.Builder mBuilder =
                                 new NotificationCompat.Builder(getApplicationContext())
                                         .setSmallIcon(R.drawable.icon)
