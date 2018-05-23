@@ -67,6 +67,8 @@ public class HomeActivity extends AppCompatActivity
 
         field_name_stored = pref.getString("field_name", null);
 
+        Toast.makeText(getApplicationContext(), field_name_stored+ " තෝරාගෙන ඇත", Toast.LENGTH_LONG).show();
+
         // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone);
 
@@ -111,12 +113,12 @@ public class HomeActivity extends AppCompatActivity
                 final SharedPreferences.Editor editor = pref.edit();
                 editor.putString("field_name", item);
                 editor.commit();
-                if (item.equals("කුඹුරක් තෝරාගෙන නැත")){
+                /*if (item.equals("කුඹුරක් තෝරාගෙන නැත")){
                     Toast.makeText(parent.getContext(), "කුඹුරක් තෝරාගෙන නැත", Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Toast.makeText(parent.getContext(), item+ "තෝරාගෙන ඇත", Toast.LENGTH_LONG).show();
-                }
+                    Toast.makeText(parent.getContext(), item+ " තෝරාගෙන ඇත", Toast.LENGTH_LONG).show();
+                }*/
             }
 
             @Override
