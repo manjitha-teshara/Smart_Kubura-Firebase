@@ -67,7 +67,9 @@ public class HomeActivity extends AppCompatActivity
 
         field_name_stored = pref.getString("field_name", null);
 
-        Toast.makeText(getApplicationContext(), field_name_stored+ " තෝරාගෙන ඇත", Toast.LENGTH_LONG).show();
+        if(field_name_stored!=null && field_name_stored!="කුඹුරක් තෝරාගෙන නැත"){
+            Toast.makeText(getApplicationContext(), field_name_stored+ " තෝරාගෙන ඇත", Toast.LENGTH_LONG).show();
+        }
 
         // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone);
@@ -248,6 +250,7 @@ public class HomeActivity extends AppCompatActivity
             editor.putString("phone", null);
             editor.putString("email", null);
             editor.putString("user", null);
+            editor.putString("field_name", null);
 
             editor.commit();
 

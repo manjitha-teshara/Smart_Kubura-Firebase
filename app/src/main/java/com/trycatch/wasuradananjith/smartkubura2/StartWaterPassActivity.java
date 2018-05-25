@@ -84,29 +84,37 @@ public class StartWaterPassActivity extends AppCompatActivity {
                 mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        mDatabase.child("isFilling").setValue(1); // update the isFilling state of the database entry to 1
-                        mDatabase.child("requiredWaterLevel").setValue(txtRequiredWaterLevel.getText().toString()); // update the required water level  of the database
 
-                        final ProgressDialog progressDialog = new ProgressDialog(StartWaterPassActivity.this,
-                                R.style.AppTheme_Dark_Dialog);
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setMessage("මදක් රැඳෙන්න ...");
-                        progressDialog.show();
+                        if (Integer.parseInt(txtRequiredWaterLevel.getText().toString())<=Integer.parseInt(txtWaterLevel.getText().toString())){
+                            Toast.makeText(StartWaterPassActivity.this,"ජලය අවශ්\u200Dය මට්ටමට පිරී ඇත",Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            mDatabase.child("isFilling").setValue(1); // update the isFilling state of the database entry to 1
+                            mDatabase.child("requiredWaterLevel").setValue(txtRequiredWaterLevel.getText().toString()); // update the required water level  of the database
 
-                        new android.os.Handler().postDelayed(
-                                new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(StartWaterPassActivity.this,"ජලය පිරෙමින් පවතී",Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getApplicationContext(),StopWaterPassActivity.class);
-                                        intent.putExtra("paddy_field_name", field_name);
-                                        intent.putExtra("water_level", water_level);
-                                        intent.putExtra("required_water_level", txtRequiredWaterLevel.getText().toString());
-                                        startActivity(intent);
-                                        finish();
-                                        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                                        progressDialog.dismiss();
-                                    }
-                                }, 3000);
+                            final ProgressDialog progressDialog = new ProgressDialog(StartWaterPassActivity.this,
+                                    R.style.AppTheme_Dark_Dialog);
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.setMessage("මදක් රැඳෙන්න ...");
+                            progressDialog.show();
+
+                            new android.os.Handler().postDelayed(
+                                    new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(StartWaterPassActivity.this,"ජලය පිරෙමින් පවතී",Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getApplicationContext(),StopWaterPassActivity.class);
+                                            intent.putExtra("paddy_field_name", field_name);
+                                            intent.putExtra("water_level", water_level);
+                                            intent.putExtra("required_water_level", txtRequiredWaterLevel.getText().toString());
+                                            startActivity(intent);
+                                            finish();
+                                            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                                            progressDialog.dismiss();
+                                        }
+                                    }, 3000);
+                        }
+
+
                     }
 
                     @Override

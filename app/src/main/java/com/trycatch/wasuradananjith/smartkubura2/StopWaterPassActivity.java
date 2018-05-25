@@ -70,6 +70,29 @@ public class StopWaterPassActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 PaddyField paddyField= dataSnapshot.getValue(PaddyField.class);
                 txtWaterLevel.setText(paddyField.getWaterLevel().toString());
+                if (Integer.parseInt(paddyField.getWaterLevel())>=Integer.parseInt(paddyField.getRequiredWaterLevel())){
+
+                    final ProgressDialog progressDialog = new ProgressDialog(StopWaterPassActivity.this,
+                            R.style.AppTheme_Dark_Dialog);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("මදක් රැඳෙන්න ...");
+                    progressDialog.show();
+
+                    new android.os.Handler().postDelayed(
+                            new Runnable() {
+                                public void run() {
+                                    Toast.makeText(StopWaterPassActivity.this,"ජලය පිරීම නතර වුණි",Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getApplicationContext(),StartWaterPassActivity.class);
+                                    intent.putExtra("paddy_field_name", field_name);
+                                    intent.putExtra("water_level", water_level);
+                                    intent.putExtra("required_water_level", required_water_level);
+                                    startActivity(intent);
+                                    finish();
+                                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                                    progressDialog.dismiss();
+                                }
+                            }, 3000);
+                }
             }
 
             @Override

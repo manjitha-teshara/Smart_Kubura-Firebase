@@ -35,59 +35,61 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        
+
         SharedPreferences pref = getSharedPreferences("loginData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
 
         phone = pref.getString("phone", null);
         field_name = pref.getString("field_name",null);
 
-        // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser+fieldName" in firebase realtime database
-        mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone+"/"+field_name);
-        Log.d("phone",phone);
-        Log.d("field_name",field_name);
+        if (phone!=null && field_name!=null){
+            // get the database reference "paddy_fields+thePhoneNumberOfTheLoggedInUser+fieldName" in firebase realtime database
+            mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields/"+phone+"/"+field_name);
+            Log.d("phone",phone);
+            Log.d("field_name",field_name);
 
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // if the water level is changed in the database
-                if (!field_name.equals("කුඹුරක් තෝරාගෙන නැත")){
-                    PaddyField paddyField= dataSnapshot.getValue(PaddyField.class);
-                    String required_water_level = paddyField.getRequiredWaterLevel();
-                    String water_level = paddyField.getWaterLevel();
+            mDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // if the water level is changed in the database
+                    if (!field_name.equals("කුඹුරක් තෝරාගෙන නැත")){
+                        PaddyField paddyField= dataSnapshot.getValue(PaddyField.class);
+                        String required_water_level = paddyField.getRequiredWaterLevel();
+                        String water_level = paddyField.getWaterLevel();
 
-                    // if the required water level is met, stop water passing and issue a notification
-                    if (Integer.parseInt(water_level)>=Integer.parseInt(required_water_level)){
+                        // if the required water level is met, stop water passing and issue a notification
+                        if (Integer.parseInt(water_level)>=Integer.parseInt(required_water_level)){
 
-                        // update the isFilling field to 0 (which indicates stop water passing)
-                        mDatabase.child("isFilling").setValue(0); // update the isFilling state of the database entry to 0
+                            // update the isFilling field to 0 (which indicates stop water passing)
+                            mDatabase.child("isFilling").setValue(0); // update the isFilling state of the database entry to 0
 
-                        // build the notification and issue it
-                        NotificationCompat.Builder mBuilder =
-                                new NotificationCompat.Builder(getApplicationContext())
-                                        .setSmallIcon(R.drawable.icon)
-                                        .setContentTitle("සාර්ථකයි!")
-                                        .setContentText(field_name+"හි ජලය පිරී අවසන්");
-                        NotificationManager mNotifyMgr =
-                                (NotificationManager) getApplicationContext().getSystemService(android.content.Context.NOTIFICATION_SERVICE);
-                        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        mBuilder.setSound(alarmSound);
-                        mBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
-                        mBuilder.setLights(Color.RED, 3000, 3000);
-                        mNotifyMgr.notify(0, mBuilder.build());
+                            // build the notification and issue it
+                            NotificationCompat.Builder mBuilder =
+                                    new NotificationCompat.Builder(getApplicationContext())
+                                            .setSmallIcon(R.drawable.icon)
+                                            .setContentTitle("සාර්ථකයි!")
+                                            .setContentText(field_name+"හි ජලය පිරී අවසන්");
+                            NotificationManager mNotifyMgr =
+                                    (NotificationManager) getApplicationContext().getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+                            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            mBuilder.setSound(alarmSound);
+                            mBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+                            mBuilder.setLights(Color.RED, 3000, 3000);
+                            mNotifyMgr.notify(0, mBuilder.build());
+                        }
+                        else{
+                            Log.d("NotificationService",Integer.parseInt(water_level) + ""+ water_level);
+                        }
+                        Log.d("NotificationService",required_water_level);
                     }
-                    else{
-                        Log.d("NotificationService",Integer.parseInt(water_level) + ""+ water_level);
-                    }
-                    Log.d("NotificationService",required_water_level);
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
         return START_STICKY;
     }
 }
