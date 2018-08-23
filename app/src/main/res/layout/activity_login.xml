@@ -75,14 +75,14 @@
             android:textSize="16dip"/>
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/privacyPolicy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
             android:layout_marginBottom="24dp"
             android:gravity="center"
             android:textColorLink="@color/colorPrimary"
-            android:text="රහස්‍යතා ප්‍රතිපත්තිය" />
+            android:text="@string/policy_link" />
     </LinearLayout>
 
 </ScrollView>

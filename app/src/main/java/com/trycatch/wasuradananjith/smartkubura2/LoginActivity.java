@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +35,9 @@ public class LoginActivity extends AppCompatActivity {
         etPhone = (EditText)findViewById(R.id.edtTelephone);
         btnLogin = (Button)findViewById(R.id.btn_sign_in);
         proceedToSignUp = (TextView)findViewById(R.id.link_sign_up);
+
+        TextView privacy_policy_link = (TextView)findViewById(R.id.privacyPolicy);
+        privacy_policy_link.setMovementMethod(LinkMovementMethod.getInstance());
 
         // get the database reference "users" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
