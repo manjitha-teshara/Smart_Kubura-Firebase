@@ -19,28 +19,6 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         StartAnimations();
-
-        /*new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run() {
-                SharedPreferences pref = getSharedPreferences("loginData", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                //editor.clear();  //for bebugging
-                //editor.commit(); //for bebugging
-                phoneStored = pref.getString("phone", null);
-                passwordStored = pref.getString("password", null);
-
-                if(phoneStored == null){
-                    Intent in = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(in);
-                }
-                else{
-                    Intent in = new Intent(getApplicationContext(), HomeActivity.class);
-                    startActivity(in);
-                }
-                SplashActivity.this.finish();
-            }
-        }, 3000);*/
     }
 
     // animation in the SplashScreen

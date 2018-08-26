@@ -39,7 +39,7 @@ public class AddPaddyFieldActivity extends AppCompatActivity {
         imeiNumber = (EditText)findViewById(R.id.edtImeiNumber);
         btnBackButton = (ImageView)findViewById(R.id.imgBackButton);
 
-
+        // get the database reference "paddy_fields" in firebase realtime database
         mDatabase = FirebaseDatabase.getInstance().getReference("paddy_fields");
 
         // load the Home Activity on back arrow button pressed
